@@ -1,2 +1,2 @@
 # Ticketing-System
-Web-based ticketing system designed for employees to submit concern tickets directly to the IT Department.
+Web-based ticketing system designed for employees to submit concern tickets directly to the IT Department.The system streamlines issue reporting by allowing employees to create detailed tickets, which are immediately visible to the IT team. This ensures faster response times, efficient tracking, and organized management of technical concerns, enhancing overall productivity and support efficiency.
