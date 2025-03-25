@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finished Tasks</title>
+    <link rel="icon" type="image/png" href="afppng.png"> <!-- Favicon -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: url('afp.jpg') no-repeat center center/cover;
+        }
+        .uh-header {
+            width: 100%;
+            background: rgba(51, 51, 51, 0.7);
+            color: white;
+            padding: 15px 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        .uh-header img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        .uh-header span {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .logout-button {
+            background: red;
+            color: white;
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s ease-in-out;
+        }
+        .logout-button:hover {
+            background: darkred;
+            transform: scale(1.1);
+        }
+
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        th {
+            background: seagreen;
+            color: white;
+        }
+        td {
+            background: #f9f9f9;
+        }
+        /* Color coding for status */
+        .status-finished {
+            color: white;
+            background: green;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .status-ongoing {
+            color: white;
+            background: blue;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .status-pending {
+            color: black;
+            background: yellow;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .delete-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: 0.3s;
+        }
+        .delete-btn:hover {
+            background: darkred;
+        }
+        .back-button {
+            display: inline-block;
+            background: #555;
+            color: white;
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background: #333;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+<div class="uh-header">
+    <div class="logo-container">
+        <img src="afppng.png" alt="Logo">
+        <span>Concerns Ticketing System (CTS)</span>
+    </div>
+    <button class="logout-button" onclick="logout()">Logout</button>
+</div>
+
+<div class="container">
+    <h2>Finished Tasks</h2>
+    <table id="finishedTable">
+        <thead>
+            <tr>
+                <th>Assigned Unit</th>
+                <th>Status</th>
+                <th>Date Submitted</th>
+                <th>Concern Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="finishedUl"></tbody>
+    </table>
+    
+    <div class="button-container">
+        <button class="back-button" onclick="backToHome()">Back to Home</button>
+    </div>
+</div>
+
+<script>
+    // Function to load and display finished tasks with color-coded statuses
+    function displayFinishedTasks() {
+        const finishedTasks = JSON.parse(localStorage.getItem('finishedTasks')) || [];
+        const finishedUl = document.getElementById('finishedUl');
+        finishedUl.innerHTML = '';
+
+        if (finishedTasks.length === 0) {
+            finishedUl.innerHTML = `<tr><td colspan="5">No Finished Tasks</td></tr>`;
+        } else {
+            finishedTasks.forEach((task, index) => {
+                const row = document.createElement('tr');
+
+                // Determine status color class
+                let statusClass = '';
+                if (task.status.toLowerCase() === 'finished') {
+                    statusClass = 'status-finished';  // Green
+                } else if (task.status.toLowerCase() === 'ongoing') {
+                    statusClass = 'status-ongoing';   // Blue
+                } else if (task.status.toLowerCase() === 'pending') {
+                    statusClass = 'status-pending';   // Yellow
+                }
+
+                row.innerHTML = `
+                    <td>${task.unit}</td>
+                    <td><span class="${statusClass}">${task.status}</span></td>
+                    <td>${task.date}</td>
+                    <td>${task.description}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
+                    </td>
+                `;
+                finishedUl.appendChild(row);
+            });
+        }
+    }
+
+    // Function to delete a task by index
+    function deleteTask(index) {
+        const finishedTasks = JSON.parse(localStorage.getItem('finishedTasks')) || [];
+        finishedTasks.splice(index, 1); // Remove the task at the specified index
+        localStorage.setItem('finishedTasks', JSON.stringify(finishedTasks));
+        displayFinishedTasks(); // Refresh the task list
+    }
+
+    // Function to navigate back to Home
+    function backToHome() {
+        window.location.href = "home.html";
+    }
+
+    // Initialize finished tasks on load
+    displayFinishedTasks();
+</script>
+
+</body>
+</html>
+
+

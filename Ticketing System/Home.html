@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTS</title>
+    <link rel="icon" type="image/png" href="afppng.png"> <!-- Favicon -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('afp.jpg') no-repeat center center/cover;
+            flex-direction: column;
+        }
+        .uh-header {
+            width: 100%;
+            background: rgba(51, 51, 51, 0.7);
+            color: white;
+            padding: 15px 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        .uh-header img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        .uh-header span {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .welcome-text {
+            color: white;
+            font-size: 18px;
+            margin-right: 80px;
+        }
+        .logout-container {
+            display: flex;
+            align-items: center;
+        }
+        .logout-button {
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s ease-in-out;
+        }
+        .logout-button:hover {
+            background: darkred;
+            transform: scale(1.1);
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 80px;
+            flex-direction: row;
+        }
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .button-group span {
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 15px;
+            border-radius: 5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .btn {
+            width: 150px;
+            height: 150px;
+            background: white;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.3s ease-in-out;
+            overflow: hidden;
+        }
+        .btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .btn img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            transition: 0.3s ease-in-out;
+        }
+        .btn:hover img {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="uh-header">
+        <div class="logo-container">
+            <img src="afppng.png" alt="Logo">
+            <span>Concerns Ticketing System (CTS)</span>
+        </div>
+
+        <div class="logout-container">
+            <span class="welcome-text">WELCOME ADMIN</span>
+            <button class="logout-button" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <div class="button-group">
+            <span>File a Concern</span>
+            <button class="btn" onclick="window.location.href='File_Concern.html'">
+                <img src="Concerns.png" alt="Users">
+            </button>
+        </div>
+        <div class="button-group">
+            <span>View Tickets</span>
+            <button class="btn" onclick="window.location.href='View_tickets.html'">
+                <img src="Ticket.jpg" alt="Users">
+            </button>
+        </div>
+        <div class="button-group">
+            <span>Finished Tasks</span>
+            <button class="btn" onclick="window.location.href='Finished_tasks.html'">
+                <img src="task.png" alt="Users">
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function logout() {
+            window.location.href = 'index.html'; // Redirect back to login page
+        }
+    </script>
+</body>
+</html>

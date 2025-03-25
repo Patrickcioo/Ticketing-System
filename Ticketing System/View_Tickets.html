@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTS</title>
+    <link rel="icon" type="image/png" href="afppng.png"> <!-- Favicon -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('afp.jpg') no-repeat center center/cover;
+            overflow: hidden;
+        }
+        .uh-header {
+            width: 100%;
+            background: rgba(51, 51, 51, 0.7);
+            color: white;
+            padding: 15px 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        .uh-header img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        .uh-header span {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .logout-button {
+            background: red;
+            color: white;
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s ease-in-out;
+        }
+        .logout-button:hover {
+            background: darkred;
+            transform: scale(1.1);
+        }
+        
+        /* Container fitting the background size */
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            height: 95vh; /* Make the container fit the background image size */
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            overflow-y: auto; /* Scrollable when content overflows */
+        }
+
+        .ticket-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        th {
+            background: seagreen;
+            color: white;
+        }
+        td {
+            background: #f9f9f9;
+        }
+        .ticket-status {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-pending {
+            color: orange;
+        }
+        .status-ongoing {
+            color: blue;
+        }
+        .status-finished {
+            color: green;
+        }
+        .delete-btn, .status-btn {
+            padding: 8px 15px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+            margin: 5px;
+        }
+        .status-btn:hover, .delete-btn:hover {
+            opacity: 0.8;
+        }
+        .status-pending {
+            background: #ffc107;
+            color: #fff;
+        }
+        .status-ongoing {
+            background: #007BFF;
+            color: #fff;
+        }
+        .status-finished {
+            background: #28a745;
+            color: #fff;
+        }
+        .delete-btn {
+            background: red;
+            color: white;
+        }
+        .back-button {
+            background: #555;
+            color: white;
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+        .back-button:hover {
+            background: #333;
+            transform: scale(1.05);
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .button-container button {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="uh-header">
+    <div class="logo-container">
+        <img src="afppng.png" alt="Logo">
+        <span>Concerns Ticketing System (CTS)</span>
+    </div>
+    <button class="logout-button" onclick="logout()">Logout</button>
+</div>
+
+<div class="container">
+    <div id="ticketList" class="ticket-container">
+        <h2>All Concerns</h2>
+        <table id="ticketTable">
+            <thead>
+                <tr>
+                    <th>Assigned Unit</th>
+                    <th>Status</th>
+                    <th>Date Submitted</th>
+                    <th>Concern Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="ticketUl"></tbody>
+        </table>
+
+        <div class="button-container">
+            <button class="back-button" onclick="backToHome()">Back to Home</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Load and display tickets
+    function viewTickets() {
+        const tickets = JSON.parse(localStorage.getItem('tickets')) || [];
+        const ticketUl = document.getElementById('ticketUl');
+        ticketUl.innerHTML = '';
+
+        tickets.forEach((ticket, index) => {
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${ticket.unit}</td>
+                <td class="ticket-status status-${ticket.status.toLowerCase()}">${ticket.status}</td>
+                <td>${ticket.date}</td>
+                <td>${ticket.description}</td>
+                <td>
+                    <button onclick="updateStatus(${index}, 'Pending')" class="status-btn status-pending">Pending</button>
+                    <button onclick="updateStatus(${index}, 'Ongoing')" class="status-btn status-ongoing">Ongoing</button>
+                    <button onclick="updateStatus(${index}, 'Finished')" class="status-btn status-finished">Finished</button>
+                    <button onclick="deleteTicket(${index})" class="delete-btn">Delete</button>
+                </td>
+            `;
+            ticketUl.appendChild(row);
+        });
+    }
+
+    // Function to update ticket status
+    function updateStatus(index, status) {
+        const tickets = JSON.parse(localStorage.getItem('tickets')) || [];
+        tickets[index].status = status;
+        localStorage.setItem('tickets', JSON.stringify(tickets));
+        viewTickets();
+    }
+
+    // Function to delete a ticket
+    function deleteTicket(index) {
+        const tickets = JSON.parse(localStorage.getItem('tickets')) || [];
+        tickets.splice(index, 1);
+        localStorage.setItem('tickets', JSON.stringify(tickets));
+        viewTickets();
+    }
+
+    // Navigation functions
+    function backToHome() {
+        window.location.href = "home.html";
+    }
+
+    function logout() {
+        window.location.href = "index.html";
+    }
+
+    // Function to update ticket status and save finished tasks
+function updateStatus(index, status) {
+    const tickets = JSON.parse(localStorage.getItem('tickets')) || [];
+    
+    // Save the finished task separately
+    if (status === 'Finished') {
+        const finishedTasks = JSON.parse(localStorage.getItem('finishedTasks')) || [];
+        finishedTasks.push(tickets[index]);  // Save the finished ticket
+        localStorage.setItem('finishedTasks', JSON.stringify(finishedTasks));
+    }
+
+    tickets[index].status = status;  // Update status in main list
+    localStorage.setItem('tickets', JSON.stringify(tickets));
+    viewTickets();
+}
+
+// Function to navigate to Finished Tasks page
+function viewFinishedTasks() {
+    window.location.href = "Finished_tasks.html";
+}
+
+
+    // Initialize tickets
+    viewTickets();
+
+</script>
+
+</body>
+</html>
+
+
